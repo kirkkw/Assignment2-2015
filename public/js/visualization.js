@@ -32,7 +32,7 @@ d3.json('/igMediaCounts', function(error, data) {
   scaleX.domain(data.users.map(function(d) { return d.username; }));
   //set domain of y to be from 0 to the maximum media count returned
   scaleY.domain([0, d3.max(data.users, function(d) { return d.counts.media; })]);
-
+  
   //set up x axis
   svg.append("g")
     .attr("class", "x axis")
@@ -57,6 +57,7 @@ d3.json('/igMediaCounts', function(error, data) {
     .style("text-anchor", "end")
     .text("Number of Photos");
 
+    
   //set up bars in bar graph
   svg.selectAll(".bar")
     .data(data.users)
@@ -66,4 +67,43 @@ d3.json('/igMediaCounts', function(error, data) {
     .attr("width", scaleX.rangeBand())
     .attr("y", function(d) { return scaleY(d.counts.media); })
     .attr("height", function(d) { return height - scaleY(d.counts.media); });
+  	
+	/*
+	 function change() {
+    clearTimeout(sortTimeout);
+
+     Copy-on-write since tweens are evaluated after a delay.
+    var x0 = x.domain(data.sort(this.checked
+        ? function(a, b) { return b.frequency - a.frequency; }
+        : function(a, b) { return d3.ascending(a.letter, b.letter); })
+        .map(function(d) { return d.letter; }))
+        .copy();
+
+    svg.selectAll(".bar")
+        .sort(function(a, b) { return x0(a.letter) - x0(b.letter); });
+
+    var transition = svg.transition().duration(750),
+        delay = function(d, i) { return i * 50; };
+
+    transition.selectAll(".bar")
+        .delay(delay)
+        .attr("x", function(d) { return x0(d.letter); });
+
+    transition.select(".x.axis")
+        .call(xAxis)
+      .selectAll("g")
+        .delay(delay);
+  }*/
+	
 });
+
+function sortFunction(){
+		console.log(In Here);
+    svg.selectAll(".bar")	
+	  .data(data.users.sort(function(a, b) {return b.counts.media > a.counts.media})
+	  .map(function(d){return d}));
+	
+    var transition = svg.transition().duration(500);	
+	transition.selectAll(".bar")
+	  .attr("x", function(d){return scaleX(d.username)});
+  }
